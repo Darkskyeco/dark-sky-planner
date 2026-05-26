@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Sky Match • Dark Sky Eco Retreat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', system_ui, sans-serif; }
+        .heading-serif { font-family: 'Playfair Display', Georgia, serif; }
+        .toggle { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .toggle input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #475569; transition: .3s; border-radius: 9999px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 18px; width: 18px;
+            left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #ca8a04; }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        #grevilleaCard {
+            transition: all 0.35s ease;
+            overflow: hidden;
+        }
+        #grevilleaCard.hide-lodge {
+            opacity: 0;
+            max-height: 0 !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            border-color: transparent !important;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-200">
+    <!-- Navigation -->
+    <nav class="border-b border-slate-800 bg-slate-950/80 backdrop-blur-lg sticky top-0 z-50">
+        <div class="max-w-screen-xl mx-auto px-6 py-5 flex items-center justify-between">
+            <div class="flex items-center gap-x-3">
+                <div class="flex items-center gap-x-2">
+                    <div class="w-9 h-9 bg-slate-900 rounded-2xl flex items-center justify-center border border-slate-700">
+                        <span class="text-amber-400 text-2xl font-bold">D</span>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-xl tracking-tight">Dark Sky Eco Retreat</div>
+                        <div class="text-[10px] text-slate-500 -mt-1">COONABARABRAN</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-screen-xl mx-auto px-6 pt-10 pb-8">
+        <div class="max-w-2xl">
+            <h1 class="text-5xl md:text-6xl leading-none tracking-tighter font-semibold heading-serif">
+                Plan your dark sky stay
+            </h1>
+            <p class="mt-4 text-lg text-slate-400">
+                Choose a season → Select a dark sky window → Build your stay with clear pricing.
+            </p>
+        </div>
+    </div>
+
+    <!-- Tool -->
+    <div class="max-w-screen-xl mx-auto px-6 pb-16">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 md:p-10">
+            
+            <!-- Season Selection -->
+            <div id="seasonSelection">
+                <h2 class="text-xl font-semibold mb-4">1. Choose a season</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+                    <button onclick="selectSeason('summer')" class="px-5 py-4 border border-slate-700 rounded-2xl text-left hover:border-amber-500 transition-colors">
+                        <div class="font-semibold">Summer</div>
+                        <div class="text-xs text-slate-400">Dec • Jan • Feb</div>
+                        <div class="text-xs mt-1 text-slate-500">Orion Nebula &amp; Summer constellations</div>
+                    </button>
+                    <button onclick="selectSeason('autumn')" class="px-5 py-4 border border-slate-700 rounded-2xl text-left hover:border-amber-500 transition-colors">
+                        <div class="font-semibold">Autumn</div>
+                        <div class="text-xs text-slate-400">Mar • Apr • May</div>
+                        <div class="text-xs mt-1 text-slate-500">Rising Milky Way &amp; Southern constellations</div>
+                    </button>
+                    <button onclick="selectSeason('winter')" class="px-5 py-4 border border-slate-700 rounded-2xl text-left hover:border-amber-500 transition-colors">
+                        <div class="font-semibold">Winter</div>
+                        <div class="text-xs text-slate-400">Jun • Jul • Aug</div>
+                        <div class="text-xs mt-1 text-slate-500">Milky Way overhead • Scorpio &amp; Trifid</div>
+                    </button>
+                    <button onclick="selectSeason('spring')" class="px-5 py-4 border border-slate-700 rounded-2xl text-left hover:border-amber-500 transition-colors">
+                        <div class="font-semibold">Spring</div>
+                        <div class="text-xs text-slate-400">Sep • Oct • Nov</div>
+                        <div class="text-xs mt-1 text-slate-500">Setting Milky Way • Andromeda rising</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dark Sky Periods -->
+            <div id="periodsSection" class="hidden mb-8">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold">2. Select a recommended dark sky window</h2>
+                    <button onclick="goBackToSeasons()" class="text-sm px-4 py-2 border border-slate-700 rounded-2xl hover:bg-slate-800">Change Season</button>
+                </div>
+                <div id="periodsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+            </div>
+
+            <!-- Customisation Panel -->
+            <div id="customisationSection" class="hidden">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="text-xl font-semibold">3. Customise your stay</h2>
+                        <p class="text-sm text-slate-400" id="selectedWindowText"></p>
+                    </div>
+                    <button onclick="goBackToPeriods()" 
+                            class="text-sm px-4 py-2 border border-slate-700 rounded-2xl hover:bg-slate-800 flex items-center gap-x-2">
+                        <i class="fa-solid fa-arrow-left text-xs"></i>
+                        <span>Back to recommendations</span>
+                    </button>
+                </div>
+
+                <!-- Main Controls -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1.5">TOTAL GUESTS</label>
+                        <select id="totalGuests" onchange="onTotalGuestsChange()" class="w-full bg-slate-950 border border-slate-700 rounded-2xl px-4 h-11 text-sm">
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4" selected>4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1.5">ADULTS (18+)</label>
+                        <div id="adultsDisplay" class="w-full bg-slate-800 border border-slate-700 rounded-2xl px-4 h-11 flex items-center text-sm font-medium"></div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1.5">CHILDREN (under 16)</label>
+                        <select id="children" onchange="onChildrenChange()" class="w-full bg-slate-950 border border-slate-700 rounded-2xl px-4 h-11 text-sm"></select>
+                    </div>
+                </div>
+
+                <div class="mb-6 max-w-[200px]">
+                    <label class="text-xs text-slate-400 block mb-1.5">NIGHTS (minimum 2)</label>
+                    <select id="nights" onchange="updateCosts()" class="w-full bg-slate-950 border border-slate-700 rounded-2xl px-4 h-11 text-sm">
+                        <option value="2">2 nights</option>
+                        <option value="3" selected>3 nights (recommended)</option>
+                        <option value="4">4 nights</option>
+                        <option value="5">5 nights</option>
+                    </select>
+                </div>
+
+                <!-- Lodges -->
+                <div class="mb-6">
+                    <div class="text-xs uppercase tracking-widest text-slate-400 mb-3">CHOOSE YOUR LODGE</div>
+                    
+                    <div id="grevilleaCard" class="border border-slate-700 rounded-2xl p-5 mb-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="font-semibold">Grevillea Lodge</div>
+                                <div class="text-xs text-slate-400">2 bedrooms • Shared bathroom • From $450/night</div>
+                            </div>
+                            <div class="text-right">
+                                <div id="grevilleaTotal" class="text-2xl font-semibold"></div>
+                                <div class="text-[10px] text-emerald-400">incl. experiences</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-slate-700 rounded-2xl p-5">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="font-semibold">Banksia Lodge</div>
+                                <div class="text-xs text-slate-400">3 bedrooms • Ensuite + shared bathroom • From $595/night</div>
+                            </div>
+                            <div class="text-right">
+                                <div id="banksiaTotal" class="text-2xl font-semibold"></div>
+                                <div class="text-[10px] text-emerald-400">incl. experiences</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Optional Experiences -->
+                <div class="mb-6">
+                    <div class="text-xs uppercase tracking-widest text-slate-400 mb-3">OPTIONAL EXPERIENCES</div>
+                    
+                    <div class="bg-slate-950 rounded-2xl p-5 space-y-6">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-x-3">
+                                    <label class="toggle">
+                                        <input type="checkbox" id="skyToggle" checked onchange="updateCosts()">
+                                        <span class="slider"></span>
+                                    </label>
+                                    <span class="font-medium">Skywatching</span>
+                                </div>
+                            </div>
+                            <div class="pl-14 text-sm space-y-1" id="skyBreakdown"></div>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-x-3">
+                                    <label class="toggle">
+                                        <input type="checkbox" id="emuToggle" checked onchange="updateCosts()">
+                                        <span class="slider"></span>
+                                    </label>
+                                    <span class="font-medium">Emu Safari</span>
+                                </div>
+                            </div>
+                            <div class="pl-14 text-sm space-y-1" id="emuBreakdown"></div>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-x-3">
+                                    <label class="toggle">
+                                        <input type="checkbox" id="caveToggle" checked onchange="updateCosts()">
+                                        <span class="slider"></span>
+                                    </label>
+                                    <span class="font-medium">Cave Tour</span>
+                                </div>
+                            </div>
+                            <div class="pl-14 text-sm space-y-1" id="caveBreakdown"></div>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-x-3">
+                                    <label class="toggle">
+                                        <input type="checkbox" id="telescopeToggle" checked onchange="updateCosts()">
+                                        <span class="slider"></span>
+                                    </label>
+                                    <span class="font-medium mr-2">Telescope Hire</span>
+                                    <select id="telescopeNights" onchange="updateCosts()" class="bg-slate-900 border border-slate-600 rounded-lg px-3 py-1 text-sm w-16"></select>
+                                    <span class="text-xs text-slate-400">nights</span>
+                                </div>
+                            </div>
+                            <div class="pl-14 text-sm" id="telescopeBreakdown"></div>
+                        </div>
+
+                        <div class="border-t border-slate-700 pt-4 mt-2">
+                            <div class="flex justify-between font-semibold">
+                                <span>Subtotal – Optional Experiences</span>
+                                <span id="experiencesSubtotal"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Final Button + Helper Text -->
+                <button onclick="checkAvailability()" 
+                        class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold py-4 rounded-2xl text-sm tracking-wide">
+                    CHECK AVAILABILITY IN OUR BOOKING CALENDAR
+                </button>
+                
+                <div class="text-center text-xs text-slate-400 mt-3">
+                    This tab will remain open so you can refer back to the dates and pricing.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PRICING = {
+            nightly: { grevillea: 450, banksia: 595 },
+            skywatching: { adult: 55, child: 25 },
+            emu: { adult: 55, child: 25 },
+            cave: { per_person: 75 },
+            telescope: 55
+        };
+
+        let currentPeriod = null;
+        let currentTotalGuests = 4;
+
+        const skyPeriods = {
+            summer: [
+                { id: 'dec2026', month: "December 2026", darkest: "28 Nov – 12 Dec", newMoon: "9 Dec" },
+                { id: 'jan2027', month: "January 2027", darkest: "27 Dec – 13 Jan", newMoon: "9 Jan" },
+                { id: 'feb2027', month: "February 2027", darkest: "25 Jan – 10 Feb", newMoon: "7 Feb" }
+            ],
+            autumn: [
+                { id: 'mar2026', month: "March 2026", darkest: "6 – 23 March", newMoon: "19 March" },
+                { id: 'apr2026', month: "April 2026", darkest: "5 – 21 April", newMoon: "17 April" },
+                { id: 'may2026', month: "May 2026", darkest: "5 – 20 May", newMoon: "17 May" }
+            ],
+            winter: [
+                { id: 'jun2026', month: "June 2026", darkest: "2 – 18 June", newMoon: "15 June" },
+                { id: 'jul2026', month: "July 2026", darkest: "3 – 17 July", newMoon: "14 July" },
+                { id: 'aug2026', month: "August 2026", darkest: "2 – 16 August", newMoon: "13 August" }
+            ],
+            spring: [
+                { id: 'sep2026', month: "September 2026", darkest: "1 – 15 September", newMoon: "11 September" },
+                { id: 'oct2026', month: "October 2026", darkest: "1 – 14 October", newMoon: "11 October" },
+                { id: 'nov2026', month: "November 2026", darkest: "29 Oct – 12 Nov", newMoon: "9 November" }
+            ]
+        };
+
+        function selectSeason(season) {
+            document.getElementById('seasonSelection').classList.add('hidden');
+            document.getElementById('periodsSection').classList.remove('hidden');
+
+            const container = document.getElementById('periodsContainer');
+            container.innerHTML = '';
+
+            skyPeriods[season].forEach(period => {
+                const div = document.createElement('div');
+                div.className = 'border border-slate-700 rounded-2xl p-5 cursor-pointer hover:border-amber-500 transition-colors';
+                div.innerHTML = `
+                    <div class="font-semibold">${period.month}</div>
+                    <div class="text-emerald-400 text-sm mt-1">Darkest: ${period.darkest}</div>
+                    <div class="text-xs mt-1">New Moon: <span class="text-amber-400">${period.newMoon}</span></div>
+                `;
+                div.onclick = () => selectPeriod(period);
+                container.appendChild(div);
+            });
+        }
+
+        function selectPeriod(period) {
+            currentPeriod = period;
+            document.getElementById('periodsSection').classList.add('hidden');
+            document.getElementById('customisationSection').classList.remove('hidden');
+
+            document.getElementById('selectedWindowText').innerHTML = 
+                `<strong>${period.month}</strong> — Recommended window: ${period.darkest} (New Moon around ${period.newMoon})`;
+
+            currentTotalGuests = 4;
+            document.getElementById('totalGuests').value = 4;
+            updateChildrenOptions();
+            document.getElementById('children').value = 0;
+            updateAdultsDisplay();
+
+            const telescopeSelect = document.getElementById('telescopeNights');
+            telescopeSelect.innerHTML = '';
+            for (let i = 0; i <= 5; i++) {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = i;
+                if (i === 1) opt.selected = true;
+                telescopeSelect.appendChild(opt);
+            }
+
+            updateCosts();
+            updateLodgeVisibility();
+        }
+
+        function goBackToPeriods() {
+            document.getElementById('customisationSection').classList.add('hidden');
+            document.getElementById('periodsSection').classList.remove('hidden');
+        }
+
+        function onTotalGuestsChange() {
+            currentTotalGuests = parseInt(document.getElementById('totalGuests').value);
+            updateChildrenOptions();
+            document.getElementById('children').value = 0;
+            updateAdultsDisplay();
+            updateCosts();
+            updateLodgeVisibility();
+        }
+
+        function onChildrenChange() {
+            updateAdultsDisplay();
+            updateCosts();
+        }
+
+        function updateChildrenOptions() {
+            const childrenSelect = document.getElementById('children');
+            childrenSelect.innerHTML = '';
+            for (let i = 0; i <= currentTotalGuests; i++) {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = i;
+                childrenSelect.appendChild(opt);
+            }
+        }
+
+        function updateAdultsDisplay() {
+            const children = parseInt(document.getElementById('children').value) || 0;
+            const adults = currentTotalGuests - children;
+            document.getElementById('adultsDisplay').innerHTML = adults;
+        }
+
+        function updateLodgeVisibility() {
+            const grevilleaCard = document.getElementById('grevilleaCard');
+            if (!grevilleaCard) return;
+
+            if (currentTotalGuests > 4) {
+                grevilleaCard.classList.add('hide-lodge');
+            } else {
+                grevilleaCard.classList.remove('hide-lodge');
+            }
+        }
+
+        function updateCosts() {
+            if (!currentPeriod) return;
+
+            const adults = parseInt(document.getElementById('adultsDisplay').innerText) || 0;
+            const children = parseInt(document.getElementById('children').value) || 0;
+            const nights = parseInt(document.getElementById('nights').value);
+
+            const skyOn = document.getElementById('skyToggle').checked;
+            const emuOn = document.getElementById('emuToggle').checked;
+            const caveOn = document.getElementById('caveToggle').checked;
+            const telescopeOn = document.getElementById('telescopeToggle').checked;
+            const telescopeNights = parseInt(document.getElementById('telescopeNights').value) || 0;
+
+            let totalExperiences = 0;
+
+            let skyTotal = 0;
+            if (skyOn) {
+                const skyAdultTotal = PRICING.skywatching.adult * adults;
+                const skyChildTotal = PRICING.skywatching.child * children;
+                skyTotal = skyAdultTotal + skyChildTotal;
+                document.getElementById('skyBreakdown').innerHTML = `
+                    <div>Adults: ${adults} × $${PRICING.skywatching.adult} = <strong>$${skyAdultTotal}</strong></div>
+                    <div>Children: ${children} × $${PRICING.skywatching.child} = <strong>$${skyChildTotal}</strong></div>
+                    <div class="font-medium">Skywatching Total: $${skyTotal}</div>
+                `;
+            } else {
+                document.getElementById('skyBreakdown').innerHTML = '';
+            }
+            totalExperiences += skyTotal;
+
+            let emuTotal = 0;
+            if (emuOn) {
+                const emuAdultTotal = PRICING.emu.adult * adults;
+                const emuChildTotal = PRICING.emu.child * children;
+                emuTotal = emuAdultTotal + emuChildTotal;
+                document.getElementById('emuBreakdown').innerHTML = `
+                    <div>Adults: ${adults} × $${PRICING.emu.adult} = <strong>$${emuAdultTotal}</strong></div>
+                    <div>Children: ${children} × $${PRICING.emu.child} = <strong>$${emuChildTotal}</strong></div>
+                    <div class="font-medium">Emu Safari Total: $${emuTotal}</div>
+                `;
+            } else {
+                document.getElementById('emuBreakdown').innerHTML = '';
+            }
+            totalExperiences += emuTotal;
+
+            let caveTotal = 0;
+            if (caveOn) {
+                caveTotal = PRICING.cave.per_person * (adults + children);
+                document.getElementById('caveBreakdown').innerHTML = `
+                    <div>${adults + children} people × $${PRICING.cave.per_person} = <strong>$${caveTotal}</strong></div>
+                    <div class="font-medium">Cave Tour Total: $${caveTotal}</div>
+                `;
+            } else {
+                document.getElementById('caveBreakdown').innerHTML = '';
+            }
+            totalExperiences += caveTotal;
+
+            let telescopeTotal = 0;
+            if (telescopeOn && telescopeNights > 0) {
+                telescopeTotal = PRICING.telescope * telescopeNights;
+                document.getElementById('telescopeBreakdown').innerHTML = `
+                    <div>${telescopeNights} nights × $${PRICING.telescope} = <strong>$${telescopeTotal}</strong></div>
+                `;
+            } else {
+                document.getElementById('telescopeBreakdown').innerHTML = '';
+            }
+            totalExperiences += telescopeTotal;
+
+            document.getElementById('experiencesSubtotal').innerText = `$${totalExperiences}`;
+
+            const grevilleaAccom = PRICING.nightly.grevillea * nights;
+            document.getElementById('grevilleaTotal').innerHTML = `$${(grevilleaAccom + totalExperiences).toLocaleString()}`;
+
+            const banksiaAccom = PRICING.nightly.banksia * nights;
+            document.getElementById('banksiaTotal').innerHTML = `$${(banksiaAccom + totalExperiences).toLocaleString()}`;
+        }
+
+        function checkAvailability() {
+            window.open('https://www.bookings247.com.au/booking2/booknow.php?property_id=3214', '_blank');
+        }
+
+        function goBackToSeasons() {
+            document.getElementById('customisationSection').classList.add('hidden');
+            document.getElementById('periodsSection').classList.add('hidden');
+            document.getElementById('seasonSelection').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
