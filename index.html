@@ -162,26 +162,28 @@
                         <div class="flex justify-between items-start">
                             <div>
                                 <div class="font-semibold">Grevillea Lodge</div>
-                                <div class="text-xs text-slate-400">2 bedrooms • Shared bathroom • From $450/night</div>
+                                <div class="text-xs text-slate-400" id="grevilleaRateLabel">2 bedrooms • Shared bathroom • From $495/night</div>
                             </div>
                             <div class="text-right">
                                 <div id="grevilleaTotal" class="text-2xl font-semibold"></div>
                                 <div class="text-[10px] text-emerald-400">incl. experiences</div>
                             </div>
                         </div>
+                        <div class="mt-2 text-xs text-slate-500" id="grevilleaAccomNote"></div>
                     </div>
 
                     <div class="border border-slate-700 rounded-2xl p-5">
                         <div class="flex justify-between items-start">
                             <div>
                                 <div class="font-semibold">Banksia Lodge</div>
-                                <div class="text-xs text-slate-400">3 bedrooms • Ensuite + shared bathroom • From $595/night</div>
+                                <div class="text-xs text-slate-400" id="banksiaRateLabel">3 bedrooms • Ensuite + shared bathroom • From $695/night</div>
                             </div>
                             <div class="text-right">
                                 <div id="banksiaTotal" class="text-2xl font-semibold"></div>
                                 <div class="text-[10px] text-emerald-400">incl. experiences</div>
                             </div>
                         </div>
+                        <div class="mt-2 text-xs text-slate-500" id="banksiaAccomNote"></div>
                     </div>
                 </div>
 
@@ -253,6 +255,11 @@
                     </div>
                 </div>
 
+                <p class="text-xs text-slate-500 mb-4">
+                    All lodge rates are tax-inclusive and already include card processing fees. 
+                    Rates increase from 1 October 2026.
+                </p>
+
                 <!-- Final Button + Helper Text -->
                 <button onclick="checkAvailability()" 
                         class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold py-4 rounded-2xl text-sm tracking-wide">
@@ -267,8 +274,20 @@
     </div>
 
     <script>
+        // Rates are PER NIGHT. Different rate for exactly 2 nights vs 3+ nights.
+        // Rate band changes on 1 October 2026.
+        const RATES = {
+            preOct2026: {
+                grevillea: { twoNight: 595, threePlus: 495 },
+                banksia:   { twoNight: 795, threePlus: 695 }
+            },
+            fromOct2026: {
+                grevillea: { twoNight: 650, threePlus: 550 },
+                banksia:   { twoNight: 875, threePlus: 775 }
+            }
+        };
+
         const PRICING = {
-            nightly: { grevillea: 450, banksia: 595 },
             skywatching: { adult: 55, child: 25 },
             emu: { adult: 55, child: 25 },
             cave: { per_person: 75 },
@@ -280,24 +299,24 @@
 
         const skyPeriods = {
             summer: [
-                { id: 'dec2026', month: "December 2026", darkest: "28 Nov – 12 Dec", newMoon: "9 Dec" },
-                { id: 'jan2027', month: "January 2027", darkest: "27 Dec – 13 Jan", newMoon: "9 Jan" },
-                { id: 'feb2027', month: "February 2027", darkest: "25 Jan – 10 Feb", newMoon: "7 Feb" }
+                { id: 'dec2026', month: "December 2026", darkest: "28 Nov – 12 Dec", newMoon: "9 Dec", rateKey: "fromOct2026" },
+                { id: 'jan2027', month: "January 2027", darkest: "27 Dec – 13 Jan", newMoon: "9 Jan", rateKey: "fromOct2026" },
+                { id: 'feb2027', month: "February 2027", darkest: "25 Jan – 10 Feb", newMoon: "7 Feb", rateKey: "fromOct2026" }
             ],
             autumn: [
-                { id: 'mar2027', month: "March 2027", darkest: "6 – 23 March", newMoon: "8 March" },
-                { id: 'apr2027', month: "April 2027", darkest: "25 March – 10 April", newMoon: "7 April" },
-                { id: 'may2027', month: "May 2027", darkest: "25 April – 10 May", newMoon: "6 May" }
+                { id: 'mar2027', month: "March 2027", darkest: "6 – 23 March", newMoon: "8 March", rateKey: "fromOct2026" },
+                { id: 'apr2027', month: "April 2027", darkest: "25 March – 10 April", newMoon: "7 April", rateKey: "fromOct2026" },
+                { id: 'may2027', month: "May 2027", darkest: "25 April – 10 May", newMoon: "6 May", rateKey: "fromOct2026" }
             ],
             winter: [
-                { id: 'jun2027', month: "June 2027", darkest: "23 May – 9 June", newMoon: "5 June" },
-                { id: 'jul2027', month: "July 2027", darkest: "1 – 22 July", newMoon: "4 July" },
-                { id: 'aug2027', month: "August 2027", darkest: "20 July – 12 August", newMoon: "2 August" }
+                { id: 'jun2027', month: "June 2027", darkest: "23 May – 9 June", newMoon: "5 June", rateKey: "fromOct2026" },
+                { id: 'jul2027', month: "July 2027", darkest: "1 – 22 July", newMoon: "4 July", rateKey: "fromOct2026" },
+                { id: 'aug2027', month: "August 2027", darkest: "20 July – 12 August", newMoon: "2 August", rateKey: "fromOct2026" }
             ],
             spring: [
-                { id: 'sep2026', month: "September 2026", darkest: "1 – 15 September", newMoon: "11 September" },
-                { id: 'oct2026', month: "October 2026", darkest: "1 – 14 October", newMoon: "11 October" },
-                { id: 'nov2026', month: "November 2026", darkest: "29 Oct – 12 Nov", newMoon: "9 November" }
+                { id: 'sep2026', month: "September 2026", darkest: "1 – 15 September", newMoon: "11 September", rateKey: "preOct2026" },
+                { id: 'oct2026', month: "October 2026", darkest: "1 – 14 October", newMoon: "11 October", rateKey: "fromOct2026" },
+                { id: 'nov2026', month: "November 2026", darkest: "29 Oct – 12 Nov", newMoon: "9 November", rateKey: "fromOct2026" }
             ]
         };
 
@@ -396,6 +415,13 @@
             }
         }
 
+        function getNightlyRate(lodge, nights) {
+            if (!currentPeriod) return 0;
+            const band = RATES[currentPeriod.rateKey];
+            const lodgeRates = band[lodge];
+            return (nights === 2) ? lodgeRates.twoNight : lodgeRates.threePlus;
+        }
+
         function updateCosts() {
             if (!currentPeriod) return;
 
@@ -466,11 +492,23 @@
 
             document.getElementById('experiencesSubtotal').innerText = `$${totalExperiences}`;
 
-            const grevilleaAccom = PRICING.nightly.grevillea * nights;
+            // Grevillea
+            const grevilleaNightly = getNightlyRate('grevillea', nights);
+            const grevilleaAccom = grevilleaNightly * nights;
             document.getElementById('grevilleaTotal').innerHTML = `$${(grevilleaAccom + totalExperiences).toLocaleString()}`;
+            document.getElementById('grevilleaAccomNote').innerHTML = 
+                `${nights} nights × $${grevilleaNightly}/night = $${grevilleaAccom.toLocaleString()} accommodation`;
+            document.getElementById('grevilleaRateLabel').innerHTML = 
+                `2 bedrooms • Shared bathroom • $${grevilleaNightly}/night (${nights === 2 ? '2-night rate' : '3+ night rate'})`;
 
-            const banksiaAccom = PRICING.nightly.banksia * nights;
+            // Banksia
+            const banksiaNightly = getNightlyRate('banksia', nights);
+            const banksiaAccom = banksiaNightly * nights;
             document.getElementById('banksiaTotal').innerHTML = `$${(banksiaAccom + totalExperiences).toLocaleString()}`;
+            document.getElementById('banksiaAccomNote').innerHTML = 
+                `${nights} nights × $${banksiaNightly}/night = $${banksiaAccom.toLocaleString()} accommodation`;
+            document.getElementById('banksiaRateLabel').innerHTML = 
+                `3 bedrooms • Ensuite + shared bathroom • $${banksiaNightly}/night (${nights === 2 ? '2-night rate' : '3+ night rate'})`;
         }
 
         function checkAvailability() {
